@@ -1,7 +1,7 @@
 {
   "name": "cpq-js",
   "description": "SteelBrick CPQ-JS",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "dependencies": {
     "jsforce": "^1.2",
     "request": "^2.69.0"
