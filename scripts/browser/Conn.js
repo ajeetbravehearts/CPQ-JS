@@ -1,12 +1,12 @@
 var jsforce = require('jsforce');
 
-module.exports = function(opts) {
+module.exports = function(oauth2) {
 
     jsforce.browser.Client.prototype._getTokens = function() {
         this.connection._refreshDelegate = true;
         return {
-            instanceUrl: opts.url,
-            refreshToken: opts.refreshToken
+            instanceUrl: oauth2.url,
+            refreshToken: oauth2.refreshToken
         }
     }
 

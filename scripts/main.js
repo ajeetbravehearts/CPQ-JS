@@ -1,9 +1,9 @@
 (function() {
     var sample = require('./api/sample/Sample.js');
 
-    var cpq = function (opts) {
+    var cpq = function (oauth2) {
         return {
-           sample: sample(opts)
+           sample: sample(oauth2)
         }
     }
 
