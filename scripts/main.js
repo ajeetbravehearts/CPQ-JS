@@ -1,12 +1,14 @@
 (function() {
-    var cpq = function (url, refreshToken) {
+    var sample = require('./api/sample/Sample.js');
+
+    var cpq = function (opts) {
         return {
-            sample: require('./api/Sample.js')(url, refreshToken)
+           sample: sample(opts)
         }
     }
 
     if (typeof window !== 'undefined')
-        window.cpq = cpq;
+        window.cpqjs = cpq;
     else
         module.exports = cpq;
 })();

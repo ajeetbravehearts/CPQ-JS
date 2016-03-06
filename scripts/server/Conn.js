@@ -1,11 +1,11 @@
 var jsforce = require('jsforce');
 
-module.exports = function(url, refreshToken) {
+module.exports = function(opts) {
 
     function getConnection() {
         return new jsforce.Connection({
-            instanceUrl: url,
-            refreshToken: refreshToken
+            instanceUrl: opts.url,
+            refreshToken: opts.refreshToken
         });
     }
 

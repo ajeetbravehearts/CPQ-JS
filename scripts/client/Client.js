@@ -1,12 +1,15 @@
-module.exports = function(url, refreshToken) {
+module.exports = function(opts) {
 
+    var version = '25.0.0';
     var endpoint = '/SBQQ/ServiceRouter';
-    var conn = typeof window !== 'undefined' ? require('../browser/Conn.js')(url, refreshToken) : require('../server/Conn.js')(url, refreshToken);
+    var conn = typeof window !== 'undefined' ? require('../browser/Conn.js')(opts) : require('../server/Conn.js')(opts);
 
-    function read(reader, uid) {
+    function read(args) {
         return new Promise(function(resolve, reject) {
+            var v = args.version || version;
             conn.getConnection().then(function(connection) {
-                connection.apex.get(endpoint + '?reader=' + reader + '&uid=' + uid).then(function(result) {
+                var url = endpoint + '?reader=' + args.reader + '&uid=' + args.uid + '&version=' + v;
+                connection.apex.get(url).then(function(result) {
                     resolve(parse(result.proxy ? result.proxy.response : result));
                 }, function(err) {
                     reject(err);
