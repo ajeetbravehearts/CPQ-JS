@@ -12,6 +12,8 @@ Instructions on how to retrieve this credential are coming soon.
 
 ## Usage
 
+### Browser
+
 Clone the repo and install its node modules:
 ```
 $ git clone https://github.com/sseixas/CPQ-JS.git
@@ -19,11 +21,8 @@ $ cd CPQ-JS
 $ npm install
 ```
 
-### Browser
-
-
-
 Build the cpq.js file:
+
 ```
 $ gulp build
 $ cd build
@@ -56,9 +55,9 @@ var cpqjs = require('cpq-js')(oauth2);
 
 ## API
 
-### Sample
+### sample
 
-#### read(uid, version)
+##### read(uid, version)
 
 ```
 var promise = cpqjs.sample.read('uid', '25.0');
@@ -67,7 +66,7 @@ promise.then(function(res) {
 }); 
 ```
 
-#### load(uid, context, version)
+##### load(uid, context, version)
 
 ```
 var promise = cpqjs.sample.load('uid', {}, '25.0');
@@ -76,7 +75,7 @@ promise.then(function(res) {
 }); 
 ```
 
-#### save(model, version)
+##### save(model, version)
 
 ```
 var promise = cpqjs.sample.save({}, '25.0');
@@ -85,14 +84,14 @@ promise.then(function(res) {
 }); 
 ```
 
-### Quote
+### quote
 
 coming soon
 
-### Product
+### product
 
 coming soon
 
-### Configuration
+### config
 
 coming soon
