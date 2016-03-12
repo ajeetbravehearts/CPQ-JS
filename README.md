@@ -72,7 +72,7 @@ promise.then(function(res) {
 ```
 var promise = cpqjs.sample.load('uid', {}, '25.0');
 promise.then(function(res) {
-    console.log(response); // {id : 'uid', context: '{}', version: '25.0'}
+    console.log(res); // {id : 'uid', context: '{}', version: '25.0'}
 }); 
 ```
 
@@ -81,7 +81,7 @@ promise.then(function(res) {
 ```
 var promise = cpqjs.sample.save({}, '25.0');
 promise.then(function(res) {
-    console.log(response); // {model: '{}', version: '25.0'}
+    console.log(res); // {model: '{}', version: '25.0'}
 }); 
 ```
 
