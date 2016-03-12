@@ -20,7 +20,7 @@
     "url": "git+https://github.com/sseixas/CPQ-JS.git"
   },
   "author": "Scott Seixas <sseixas@salesforce.com>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/sseixas/CPQ-JS/issues"
   },
