@@ -1,6 +1,6 @@
 # CPQ.js
 
-Used to access [Steelbrick CPQ](http://www.steelbrick.com) API from JavaScript apps served outside of Salesforce.  Use this library in the browser or in a Node.js app.  When used in the browser, this library works around the same origin policy which restricts browser communication to any Salesforce hosted API from an outer domain.  
+Used to access [Steelbrick CPQ](http://www.steelbrick.com) API from JavaScript apps served outside of Salesforce.  Use this library in a Node.js app or the browser.  When used in the browser, this library works around the same origin policy which restricts browser communication to any Salesforce hosted API from an outer domain.  
 
 Requires the Steelbrick Spring 16' release or later.
 
@@ -11,6 +11,15 @@ Built in authorization management via an OAuth2 refresh token maintains consiste
 Instructions on how to retrieve this credential are coming soon.
 
 ## Usage
+
+### Node.js
+
+Initialize from the cpq-js node module:
+```
+var oauth2 = {url: '<url>', refreshToken: '<refreshToken>'};
+var cpqjs = require('cpq-js')(oauth2);
+```
+
 
 ### Browser
 
@@ -44,14 +53,6 @@ Initialize from window:
 </script>
 ```
 Copy the cpq.js.map sourcemap file in the same directory as cpq.js if you want to debug in the browser.
-
-### Node.js
-
-Initialize from the cpq-js node module:
-```
-var oauth2 = {url: '<url>', refreshToken: '<refreshToken>'};
-var cpqjs = require('cpq-js')(oauth2);
-```
 
 ## API
 
