@@ -1,6 +1,6 @@
 # CPQ.js
 
-Used to access [Steelbrick CPQ](http://www.steelbrick.com) API from JavaScript apps served outside of Salesforce.  Use this library in a Node.js app or the browser. Requires the Steelbrick Spring 16' release or later.
+Used to access [Steelbrick CPQ](http://www.steelbrick.com) API from JavaScript apps served outside of Salesforce.  Use this library in a Node.js app or the browser. Requires the Steelbrick Summer 16' release or later.
 
 
 ## Access

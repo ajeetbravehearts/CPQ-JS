@@ -12,7 +12,7 @@ module.exports = function(oauth2) {
 
     function getConnection() {
         return new Promise(function(resolve, reject) {
-            jsforce.browser.on('connect', function(conn) {
+            jsforce.browser.once('connect', function(conn) {
                 var createRequestParams = conn.apex._createRequestParams.bind(conn.apex);
                 conn.apex._createRequestParams = function(method, path, body) {
                     var params = createRequestParams(method, path, body);
