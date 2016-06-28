@@ -120,7 +120,7 @@ promise.then(function(product) {
 ```
 var searchFilters = []; // array of JSON serialized SBQQ__SearchFilter__c SObjects
 var format = 'products'; // if format equals products then returns array of products; else pricebook entries
-var recordPerPage = 20; // maximum number of returned items for any given search call; else  all results
+var recordPerPage = 20; // maximum number of returned items for any given search call; else all results
 var pageNumber = 1; // if recordPerPage is set then returns window of records
 
 var queryPromise = cpqjs.query(
