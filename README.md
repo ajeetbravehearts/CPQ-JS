@@ -94,8 +94,8 @@ var products = []; // the array of product objects to add to the quote (from cpq
 var ignoreCalculate = true; // if true does not perform a quote calculation after adding the products
 
 var promise = cpqjs.quote.addProducts(quote, groupKey, products, ignoreCalculate);
-promise.then(function(quoteWithProducts) {
-    console.log(quoteWithProducts); // {record: Object, nextKey: 4, netTotal: 0, lineItems: Array[3]…}
+promise.then(function(quoteWithAddedProducts) {
+    console.log(quoteWithAddedProducts); // {record: Object, nextKey: 4, netTotal: 0, lineItems: Array[3]…}
 }); 
 ```
 
