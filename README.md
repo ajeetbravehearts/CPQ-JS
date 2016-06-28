@@ -1,12 +1,14 @@
 # CPQ.js
 
-Used to access [Steelbrick CPQ](http://www.steelbrick.com) API from JavaScript apps served outside of Salesforce.  Use this library in a Node.js app or the browser. Requires the Steelbrick Summer 16' release or later.
+Used to access the [SteelBrick CPQ](http://www.steelbrick.com) - [Public API](https://community.steelbrick.com/t5/Release-Notes/Public-API-Overview/ta-p/4418/message-revision/4418%3A11) from JavaScript apps served outside of Salesforce.  Use this library in a Node.js app or the browser. Requires the SteelBrick Spring 16' v2 release (25.2) or later.
 
 
 ## Access
-Built in authorization management via an OAuth2 refresh token maintains consistent access to the API. Retrieve this credential from your Steelbrick ORG and your API access will automatically be refreshed as needed. 
+Built in authorization management via an OAuth2 refresh token maintains consistent access to the API. Retrieve this credential from your SteelBrick ORG and your API access will automatically be refreshed as needed. 
 
-Instructions on how to retrieve this credential are coming soon.
+To retrieve your credential go to SteelBrick CPQ > Settings Editor (/apex/EditSettings) and click on the Additional Settings tab.  Find the OAuth Refresh Token field and click to reveal the credential.
+  
+If the OAuth Refresh Token field is not available then you need to first authorize to establish the credential. Close the browser program you are using (e.g. Chrome, Firefox, Safari) and reopen it.  Initiate the OAuth web authentication flow [here](https://brick-rest.steelbrick.com/oauth/auth).  Login to the org you want to connect to and then click Allow.  You will now be able to access your credential via the above instructions.
 
 ## Usage
 
@@ -54,43 +56,142 @@ Copy the cpq.js.map sourcemap file in the same directory as cpq.js if you want t
 
 ## API
 
-### sample
-
-##### read(uid, version)
-
-```
-var promise = cpqjs.sample.read('uid', '25.0');
-promise.then(function(res) {
-    console.log(res); // {id : 'uid', version: '25.0'}
-}); 
-```
-
-##### load(uid, context, version)
-
-```
-var promise = cpqjs.sample.load('uid', {}, '25.0');
-promise.then(function(res) {
-    console.log(res); // {id : 'uid', context: '{}', version: '25.0'}
-}); 
-```
-
-##### save(model, version)
-
-```
-var promise = cpqjs.sample.save({}, '25.0');
-promise.then(function(res) {
-    console.log(res); // {model: '{}', version: '25.0'}
-}); 
-```
-
 ### quote
 
-coming soon
+##### read(quoteId)
+
+```
+var quoteId = 'a0Ri000000LBDXo';
+var promise = cpqjs.quote.read(quoteId);
+promise.then(function(quote) {
+    console.log(quote); // {record: Object, nextKey: 3, netTotal: 18900, netNonSegmentTotal: 18900, lineItems: Array[2]…}
+}); 
+```
+
+##### save(quote)
+
+```
+var promise = cpqjs.quote.save(quote); // quote from cpqjs.quote.read
+promise.then(function(savedQuote) {
+    console.log(savedQuote); // {record: Object, nextKey: 3, netTotal: 18900, netNonSegmentTotal: 18900, lineItems: Array[2]…}
+}); 
+```
+
+##### calculate(quote)
+
+```
+var promise = cpqjs.quote.calculate(quote); // quote from cpqjs.quote.read
+promise.then(function(calculatedQuote) {
+    console.log(calculatedQuote); // {record: Object, nextKey: 3, netTotal: 18900, netNonSegmentTotal: 18900, lineItems: Array[2]…}
+}); 
+```
+
+##### addProducts(quote, groupKey, products, ignoreCalculate)
+
+```
+var groupKey = 1; // the index of the quote group you want to add the products to
+var products = []; // the array of product objects to add to the quote (products can be retrieved from cpqjs.product.read)
+var ignoreCalculate = true; // if true does not perform a quote calculation after adding the products
+
+var promise = cpqjs.quote.addProducts(quote, groupKey, products, ignoreCalculate); // quote from cpqjs.quote.read
+promise.then(function(quoteWithAddedProducts) {
+    console.log(quoteWithAddedProducts); // {record: Object, nextKey: 4, netTotal: 180900, netNonSegmentTotal: 180900, lineItems: Array[3]…}
+}); 
+```
+
 
 ### product
 
-coming soon
+##### read(productId)
 
-### config
+```
+var productId = '01ti0000008GifE';
+var pricebookId = '01si00000040lsx';
+var currencyCode = 'USD';
 
-coming soon
+var promise = cpqjs.product.read(productId, pricebookId, currencyCode);
+promise.then(function(product) {
+    console.log(product); // {record: Object, featureCategories: Array[0], currencySymbol: "$"}
+}); 
+```
+
+##### search(searchFilters, format, quote, recordsPerPage, pageNumber)
+
+```
+var searchFilters = []; // array of JSON serialized SBQQ__SearchFilter__c SObjects
+var format = 'products'; // if format equals products then returns array of products; otherwise returns an array of pricebook entries
+var recordPerPage = 20; // maximum number of returned items for any given search call; otherwise null to return all results
+var pageNumber = 1; // if recordPerPage is set, returns window of records: [(pageNumber - 1) * recordPerPage, pageNumber * recordsPerPage) - [0, 20)
+
+var queryPromise = cpqjs.query(
+    "SELECT SBQQ__TargetObject__c, SBQQ__TargetField__c, SBQQ__Operator__c, SBQQ__FilterValue__c FROM SBQQ__SearchFilter__c WHERE Id = 'a0di0000003rCen'"
+);
+
+queryPromise.then(function(queryResponse) {
+    searchFilters = queryResponse.records;
+    var promise = cpqjs.product.search(searchFilters, format, quote, recordsPerPage, pageNumber); // quote from cpqjs.quote.read
+    promise.then(function(searchedProducts) {
+        console.log(searchedProducts); // [Object, Object]
+        console.log(searchedProducts[0]); // {record: Object, featureCategories: Array[0], currencySymbol: "$"}
+    }); 
+});
+```
+
+##### suggest(quoteProcess, format, quote, recordsPerPage, pageNumber)
+
+```
+var quoteProcess = // JSON serialized SBQQ__QuoteProcess__c SObject
+var format = 'products'; // if format equals products then returns array of products; otherwise returns an array of pricebook entries
+var recordPerPage = 20; // maximum number of returned items for any given suggest call; otherwise null to return all results
+var pageNumber = 1; // if recordPerPage is set, returns window of records: [(pageNumber - 1) * recordPerPage, pageNumber * recordsPerPage) - [0, 20)
+
+var queryPromise = cpqjs.query(
+    "SELECT Id, SBQQ__ProductAutoSelected__c, SBQQ__GuidedOnly__c, " +
+        "(SELECT SBQQ__QuoteProcess__c, Id, Name, SBQQ__Label__c, SBQQ__Active__c, SBQQ__DisplayOrder__c, SBQQ__InputField__c," + 
+        " SBQQ__Operator__c, SBQQ__ProductField__c, SBQQ__IntegerInput__c FROM SBQQ__Inputs__r) " +
+    "FROM SBQQ__QuoteProcess__c WHERE Id = 'a0Oi000000PGpWl'"
+);
+
+queryPromise.then(function(queryResponse) {
+    quoteProcess = queryResponse.records[0];
+    var promise = cpqjs.product.suggest(quoteProcess, format, quote, recordsPerPage, pageNumber); // quote from cpqjs.quote.read
+    promise.then(function(suggestedProducts) {
+        console.log(suggestedProducts); // [Object, Object]
+        console.log(suggestedProducts[0]); // {record: Object, featureCategories: Array[0], currencySymbol: "$"}
+    }); 
+});
+```
+
+
+### contract
+
+##### amend(contractId)
+
+```
+var contractId = '003i000003L1i6C';
+var promise = cpqjs.contract.amend(contractId);
+promise.then(function(amendedQuote) {
+    console.log(amendedQuote); // {record: Object, nextKey: 2, netTotal: 0, netNonSegmentTotal: 0, lineItems: Array[1]…}
+}); 
+```
+
+##### renew(masterContractId, renewedContracts)
+
+```
+var quotes = [];
+var masterContractId = '800i0000000CMiAAAW';
+var renewedContracts = []; // array of JSON serialized Contract SObjects
+
+var queryPromise = cpqjs.query(
+    "SELECT Id, AccountId, StartDate, ContractTerm, SBQQ__Opportunity__c, SBQQ__PreserveBundleStructureUponRenewals__c FROM Contract WHERE Id = '800i0000000Cd4OAAS'"
+);
+
+queryPromise.then(function(queryResponse) {
+    renewedContracts = queryResponse.records;
+    var promise = cpqjs.contract.renew(masterContractId, renewedContracts);
+    promise.then(function(renewalQuotes) {
+        console.log(renewalQuotes); // [Object]
+        console.log(renewalQuotes[0]); // {record: Object, nextKey: 2, netTotal: 950, netNonSegmentTotal: 950, lineItems: Array[1]…}
+    });
+}); 
+```

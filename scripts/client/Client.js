@@ -1,8 +1,9 @@
 module.exports = function(oauth2) {
 
-    var version = '25.0.0';
+    var version = '25.2.0';
     var route = '/SBQQ/ServiceRouter';
-    var conn = typeof window !== 'undefined' ? require('../browser/Conn.js')(oauth2) : require('../server/Conn.js')(oauth2);
+    var inBrowser = typeof window !== 'undefined';
+    var conn = inBrowser ? require('../browser/Conn.js')(oauth2) : require('../server/Conn.js')(oauth2);
 
     function read(args) {
         var endpoint = route + '?reader=' + args.reader + '&uid=' + args.uid + '&version=' + (args.version || version);
@@ -51,6 +52,24 @@ module.exports = function(oauth2) {
         });
     }
 
+    function query(soql) {
+        if(!inBrowser)
+            return conn.getConnection().query(soql);
+
+        var body = {saver: 'query', model: JSON.stringify({soql: soql})};
+        return new Promise(function(resolve, reject) {
+            conn.getConnection().then(function(connection) {
+                connection.apex.post(null, body).then(function(result) {
+                    resolve(parse(result.proxy ? result.proxy.response : result));
+                }, function(err) {
+                    reject(err);
+                });
+            }, function(err) {
+                reject(err);
+            });
+        });
+    }
+
     function parse(obj) {
         try {
             return JSON.parse(obj);
@@ -62,6 +81,7 @@ module.exports = function(oauth2) {
     return {
         read: read,
         load: load,
-        save: save
+        save: save,
+        query: query
     };
 }
