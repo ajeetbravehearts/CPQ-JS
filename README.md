@@ -180,7 +180,6 @@ promise.then(function(amendedQuote) {
 ##### renew(masterContractId, renewedContracts)
 
 ```
-var quotes = [];
 var masterContractId = '800i0000000CMiAAAW';
 var renewedContracts = []; // array of JSON serialized Contract SObjects
 
