@@ -102,7 +102,7 @@ promise.then(function(quoteWithAddedProducts) {
 
 ### product
 
-##### read(productId)
+##### read(productId, pricebookId, currencyCode)
 
 ```
 var productId = '01ti0000008GifE';
