@@ -64,7 +64,7 @@ Copy the cpq.js.map sourcemap file in the same directory as cpq.js if you want t
 var quoteId = 'a0Ri000000LBDXo';
 var promise = cpqjs.quote.read(quoteId);
 promise.then(function(quote) {
-    console.log(quote); // {record: Object, nextKey: 3, netTotal: 18900, netNonSegmentTotal: 18900, lineItems: Array[2]…}
+    console.log(quote); // {record: Object, nextKey: 3, netTotal: 0, netNonSegmentTotal: 0, lineItems: Array[2]…}
 }); 
 ```
 
@@ -73,7 +73,7 @@ promise.then(function(quote) {
 ```
 var promise = cpqjs.quote.save(quote); // quote from cpqjs.quote.read
 promise.then(function(savedQuote) {
-    console.log(savedQuote); // {record: Object, nextKey: 3, netTotal: 18900, netNonSegmentTotal: 18900, lineItems: Array[2]…}
+    console.log(savedQuote); // {record: Object, nextKey: 3, netTotal: 0, netNonSegmentTotal: 0, lineItems: Array[2]…}
 }); 
 ```
 
@@ -82,7 +82,7 @@ promise.then(function(savedQuote) {
 ```
 var promise = cpqjs.quote.calculate(quote); // quote from cpqjs.quote.read
 promise.then(function(calculatedQuote) {
-    console.log(calculatedQuote); // {record: Object, nextKey: 3, netTotal: 18900, netNonSegmentTotal: 18900, lineItems: Array[2]…}
+    console.log(calculatedQuote); // {record: Object, nextKey: 3, netTotal: 0, netNonSegmentTotal: 0, lineItems: Array[2]…}
 }); 
 ```
 
@@ -94,8 +94,8 @@ var products = []; // the array of product objects to add to the quote (products
 var ignoreCalculate = true; // if true does not perform a quote calculation after adding the products
 
 var promise = cpqjs.quote.addProducts(quote, groupKey, products, ignoreCalculate); // quote from cpqjs.quote.read
-promise.then(function(quoteWithAddedProducts) {
-    console.log(quoteWithAddedProducts); // {record: Object, nextKey: 4, netTotal: 180900, netNonSegmentTotal: 180900, lineItems: Array[3]…}
+promise.then(function(quoteWithProducts) {
+    console.log(quoteWithProducts); // {record: Object, nextKey: 4, netTotal: 0, netNonSegmentTotal: 0, lineItems: Array[3]…}
 }); 
 ```
 
@@ -119,17 +119,18 @@ promise.then(function(product) {
 
 ```
 var searchFilters = []; // array of JSON serialized SBQQ__SearchFilter__c SObjects
-var format = 'products'; // if format equals products then returns array of products; otherwise returns an array of pricebook entries
-var recordPerPage = 20; // maximum number of returned items for any given search call; otherwise null to return all results
-var pageNumber = 1; // if recordPerPage is set, returns window of records: [(pageNumber - 1) * recordPerPage, pageNumber * recordsPerPage) - [0, 20)
+var format = 'products'; // if format equals products then returns array of products; else pricebook entries
+var recordPerPage = 20; // maximum number of returned items for any given search call; else  all results
+var pageNumber = 1; // if recordPerPage is set then returns window of records
 
 var queryPromise = cpqjs.query(
-    "SELECT SBQQ__TargetObject__c, SBQQ__TargetField__c, SBQQ__Operator__c, SBQQ__FilterValue__c FROM SBQQ__SearchFilter__c WHERE Id = 'a0di0000003rCen'"
+    "SELECT SBQQ__TargetObject__c, SBQQ__TargetField__c, SBQQ__Operator__c, SBQQ__FilterValue__c " + 
+    "FROM SBQQ__SearchFilter__c WHERE Id = 'a0di0000003rCen'"
 );
 
 queryPromise.then(function(queryResponse) {
     searchFilters = queryResponse.records;
-    var promise = cpqjs.product.search(searchFilters, format, quote, recordsPerPage, pageNumber); // quote from cpqjs.quote.read
+    var promise = cpqjs.product.search(searchFilters, format, quote, recordsPerPage, pageNumber);
     promise.then(function(searchedProducts) {
         console.log(searchedProducts); // [Object, Object]
         console.log(searchedProducts[0]); // {record: Object, featureCategories: Array[0], currencySymbol: "$"}
@@ -141,20 +142,20 @@ queryPromise.then(function(queryResponse) {
 
 ```
 var quoteProcess = // JSON serialized SBQQ__QuoteProcess__c SObject
-var format = 'products'; // if format equals products then returns array of products; otherwise returns an array of pricebook entries
-var recordPerPage = 20; // maximum number of returned items for any given suggest call; otherwise null to return all results
-var pageNumber = 1; // if recordPerPage is set, returns window of records: [(pageNumber - 1) * recordPerPage, pageNumber * recordsPerPage) - [0, 20)
+var format = 'products'; // if format equals products then returns array of products; else pricebook entries
+var recordPerPage = 20; // maximum number of returned items for any given search call; else  all results
+var pageNumber = 1; // if recordPerPage is set then returns window of records
 
 var queryPromise = cpqjs.query(
     "SELECT Id, SBQQ__ProductAutoSelected__c, SBQQ__GuidedOnly__c, " +
-        "(SELECT SBQQ__QuoteProcess__c, Id, Name, SBQQ__Label__c, SBQQ__Active__c, SBQQ__DisplayOrder__c, SBQQ__InputField__c," + 
-        " SBQQ__Operator__c, SBQQ__ProductField__c, SBQQ__IntegerInput__c FROM SBQQ__Inputs__r) " +
+        "(SELECT SBQQ__QuoteProcess__c, Id, Name, SBQQ__Label__c, SBQQ__Active__c, SBQQ__DisplayOrder__c," + 
+        " SBQQ__InputField__c, SBQQ__Operator__c, SBQQ__ProductField__c, SBQQ__IntegerInput__c FROM SBQQ__Inputs__r) " +
     "FROM SBQQ__QuoteProcess__c WHERE Id = 'a0Oi000000PGpWl'"
 );
 
 queryPromise.then(function(queryResponse) {
     quoteProcess = queryResponse.records[0];
-    var promise = cpqjs.product.suggest(quoteProcess, format, quote, recordsPerPage, pageNumber); // quote from cpqjs.quote.read
+    var promise = cpqjs.product.suggest(quoteProcess, format, quote, recordsPerPage, pageNumber);
     promise.then(function(suggestedProducts) {
         console.log(suggestedProducts); // [Object, Object]
         console.log(suggestedProducts[0]); // {record: Object, featureCategories: Array[0], currencySymbol: "$"}
@@ -183,7 +184,8 @@ var masterContractId = '800i0000000CMiAAAW';
 var renewedContracts = []; // array of JSON serialized Contract SObjects
 
 var queryPromise = cpqjs.query(
-    "SELECT Id, AccountId, StartDate, ContractTerm, SBQQ__Opportunity__c, SBQQ__PreserveBundleStructureUponRenewals__c FROM Contract WHERE Id = '800i0000000Cd4OAAS'"
+    "SELECT Id, AccountId, StartDate, ContractTerm, SBQQ__Opportunity__c, SBQQ__PreserveBundleStructureUponRenewals__c " + 
+    "FROM Contract WHERE Id = '800i0000000Cd4OAAS'"
 );
 
 queryPromise.then(function(queryResponse) {
@@ -191,7 +193,7 @@ queryPromise.then(function(queryResponse) {
     var promise = cpqjs.contract.renew(masterContractId, renewedContracts);
     promise.then(function(renewalQuotes) {
         console.log(renewalQuotes); // [Object]
-        console.log(renewalQuotes[0]); // {record: Object, nextKey: 2, netTotal: 950, netNonSegmentTotal: 950, lineItems: Array[1]…}
+        console.log(renewalQuotes[0]); // {record: Object, nextKey: 2, netTotal: 0, netNonSegmentTotal: 0, lineItems: Array[1]…}
     });
 }); 
 ```
