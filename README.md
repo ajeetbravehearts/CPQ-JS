@@ -6,7 +6,7 @@ Used to access the [SteelBrick CPQ](http://www.steelbrick.com) - [Public API](ht
 ## Access
 Built in authorization management via an OAuth2 refresh token maintains consistent access to the API. Retrieve this credential from your SteelBrick ORG and your API access will automatically be refreshed as needed. 
 
-To retrieve your credential go to SteelBrick CPQ > Settings Editor (/apex/EditSettings) and click on the Additional Settings tab.  Find the OAuth Refresh Token field and click to reveal the credential.
+To retrieve your credential go to SteelBrick CPQ > Settings Editor (/apex/SBQQ__EditSettings) and click on the Additional Settings tab.  Find the OAuth Refresh Token field and click to reveal the credential.
   
 If the OAuth Refresh Token field is not available then you need to first authorize to establish the credential. Close the browser program you are using (e.g. Chrome, Firefox, Safari) and reopen it.  Initiate the OAuth web authentication flow [here](https://brick-rest.steelbrick.com/oauth/auth).  Login to the org you want to connect to and then click Allow.  You will now be able to access your credential via the above instructions.
 
